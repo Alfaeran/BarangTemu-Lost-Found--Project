@@ -1,0 +1,122 @@
+import axios, { AxiosInstance } from 'axios';
+import { Item, Category, User, CreateItemRequest, UpdateItemRequest, PaginatedResponse, ApiResponse } from '../types';
+
+class ApiClient {
+  private api: AxiosInstance;
+  private baseURL: string;
+
+  constructor() {
+    this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    this.api = axios.create({
+      baseURL: this.baseURL,
+      timeout: 10000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    // Add token to requests if available
+    this.api.interceptors.request.use((config) => {
+      const token = localStorage.getItem('token');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+  }
+
+  // ===== ITEMS =====
+  async getItems(filters?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    status?: string;
+    location?: string;
+    title?: string;
+    userId?: number;
+  }): Promise<PaginatedResponse<Item>> {
+    const { data } = await this.api.get('/items', { params: filters });
+    return data;
+  }
+
+  async getItemById(id: number): Promise<ApiResponse<Item>> {
+    const { data } = await this.api.get(`/items/${id}`);
+    return data;
+  }
+
+  async createItem(item: CreateItemRequest & { userId: number }): Promise<ApiResponse<Item>> {
+    const { data } = await this.api.post('/items', item);
+    return data;
+  }
+
+  async updateItem(id: number, item: UpdateItemRequest): Promise<ApiResponse<Item>> {
+    const { data } = await this.api.put(`/items/${id}`, item);
+    return data;
+  }
+
+  async deleteItem(id: number): Promise<ApiResponse<null>> {
+    const { data } = await this.api.delete(`/items/${id}`);
+    return data;
+  }
+
+  async searchItems(query: string, searchType: 'location' | 'title'): Promise<ApiResponse<Item[]>> {
+    const { data } = await this.api.get(`/items/search/${searchType}`, {
+      params: { [searchType]: query },
+    });
+    return data;
+  }
+
+  // ===== CATEGORIES =====
+  async getCategories(): Promise<ApiResponse<Category[]>> {
+    const { data } = await this.api.get('/categories');
+    return data;
+  }
+
+  async getCategoryById(id: number): Promise<ApiResponse<Category>> {
+    const { data } = await this.api.get(`/categories/${id}`);
+    return data;
+  }
+
+  async createCategory(category: { name: string; icon?: string; formSchema?: any }): Promise<ApiResponse<Category>> {
+    const { data } = await this.api.post('/categories', category);
+    return data;
+  }
+
+  async updateCategory(id: number, category: { name?: string; icon?: string; formSchema?: any }): Promise<ApiResponse<Category>> {
+    const { data } = await this.api.put(`/categories/${id}`, category);
+    return data;
+  }
+
+  async deleteCategory(id: number): Promise<ApiResponse<null>> {
+    const { data } = await this.api.delete(`/categories/${id}`);
+    return data;
+  }
+
+  // ===== USERS =====
+  async getUsers(): Promise<ApiResponse<User[]>> {
+    const { data } = await this.api.get('/users');
+    return data;
+  }
+
+  async getUserById(id: number): Promise<ApiResponse<User>> {
+    const { data } = await this.api.get(`/users/${id}`);
+    return data;
+  }
+
+  async createUser(user: { username: string; email: string; phoneNumber?: string }): Promise<ApiResponse<User>> {
+    const { data } = await this.api.post('/users', user);
+    return data;
+  }
+
+  async updateUser(id: number, user: { username?: string; email?: string; phoneNumber?: string }): Promise<ApiResponse<User>> {
+    const { data } = await this.api.put(`/users/${id}`, user);
+    return data;
+  }
+
+  async deleteUser(id: number): Promise<ApiResponse<null>> {
+    const { data } = await this.api.delete(`/users/${id}`);
+    return data;
+  }
+}
+
+export default new ApiClient();

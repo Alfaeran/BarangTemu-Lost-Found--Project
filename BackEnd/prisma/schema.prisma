@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enums
+enum ItemType {
+  LOST
+  FOUND
+
+  @@map("item_type_enum")
+}
+
+enum ItemStatus {
+  OPEN
+  RESOLVED
+
+  @@map("item_status_enum")
+}
+
+// Models for Lost & Found Application
+
+model User {
+  id            Int       @id @default(autoincrement())
+  username      String
+  email         String    @unique
+  phoneNumber   String?   @map("phone_number")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  items         Item[]
+
+  @@map("users")
+}
+
+model Category {
+  id          Int       @id @default(autoincrement())
+  name        String
+  icon        String?
+  formSchema  Json?     @map("form_schema")
+
+  // Relations
+  items       Item[]
+
+  @@map("categories")
+}
+
+model Item {
+  id                Int       @id @default(autoincrement())
+  userId            Int
+  categoryId        Int?      @map("category_id")
+  type              ItemType
+  title             String
+  description       String?
+  location          String
+  dateIncident      DateTime  @map("date_incident") @db.Date
+  imageUrl          String?   @map("image_url")
+  contactInfo       String    @map("contact_info")
+  additionalData    Json?     @map("additional_data")
+  status            ItemStatus @default(OPEN)
+  createdAt         DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  user              User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category          Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@index([categoryId])
+  @@index([status])
+  @@map("items")
+}
