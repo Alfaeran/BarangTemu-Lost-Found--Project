@@ -3,12 +3,10 @@ import { UserService } from '../services/user.service';
 import { CreateUserDTO, UpdateUserDTO, LoginDTO } from '../types';
 
 export class UserController {
-  // Register user
   static async registerUser(req: Request, res: Response, next: NextFunction) {
     try {
       const data: CreateUserDTO = req.body;
 
-      // Validate input
       if (!data.username || !data.email || !data.password) {
         return res.status(400).json({
           success: false,
@@ -28,12 +26,10 @@ export class UserController {
     }
   }
 
-  // Login user
   static async loginUser(req: Request, res: Response, next: NextFunction) {
     try {
       const data: LoginDTO = req.body;
 
-      // Validate input
       if (!data.email || !data.password) {
         return res.status(400).json({
           success: false,
@@ -53,7 +49,6 @@ export class UserController {
     }
   }
 
-  // Get all users
   static async getAllUsers(req: Request, res: Response, next: NextFunction) {
     try {
       const users = await UserService.getAllUsers();
@@ -67,7 +62,6 @@ export class UserController {
     }
   }
 
-  // Get user by ID
   static async getUserById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -82,10 +76,9 @@ export class UserController {
     }
   }
 
-  // Get current user
   static async getCurrentUser(req: Request, res: Response, next: NextFunction) {
     try {
-      const userId = (req as any).userId; // Set by auth middleware
+      const userId = (req as any).userId;
       if (!userId) {
         return res.status(401).json({
           success: false,
@@ -104,7 +97,6 @@ export class UserController {
     }
   }
 
-  // Create user (admin only)
   static async createUser(req: Request, res: Response, next: NextFunction) {
     try {
       const data: CreateUserDTO = req.body;
@@ -119,7 +111,6 @@ export class UserController {
     }
   }
 
-  // Update user
   static async updateUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -135,7 +126,6 @@ export class UserController {
     }
   }
 
-  // Delete user
   static async deleteUser(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -150,7 +140,6 @@ export class UserController {
     }
   }
 
-  // Get user items
   static async getUserItems(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

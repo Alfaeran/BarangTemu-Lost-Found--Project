@@ -2,13 +2,11 @@ import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import fs from 'fs';
 
-// Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, '../../uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Storage configuration
 const storage = multer.diskStorage({
   destination: (req: any, file: any, cb: any) => {
     cb(null, uploadsDir);
@@ -19,7 +17,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// File filter for images only
 const fileFilter = (req: any, file: any, cb: FileFilterCallback) => {
   const allowedMimes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
   if (allowedMimes.includes(file.mimetype)) {
@@ -29,11 +26,10 @@ const fileFilter = (req: any, file: any, cb: FileFilterCallback) => {
   }
 };
 
-// Multer configuration
 export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max file size
+    fileSize: 5 * 1024 * 1024,
   },
 });

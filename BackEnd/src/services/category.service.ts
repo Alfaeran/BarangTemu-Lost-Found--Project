@@ -2,7 +2,6 @@ import prisma from '../lib/prisma';
 import { CreateCategoryDTO, UpdateCategoryDTO, AppError } from '../types';
 
 export class CategoryService {
-  // Get all categories
   static async getAllCategories() {
     return prisma.category.findMany({
       include: {
@@ -13,7 +12,6 @@ export class CategoryService {
     });
   }
 
-  // Get category by ID
   static async getCategoryById(id: number) {
     const category = await prisma.category.findUnique({
       where: { id },
@@ -31,7 +29,6 @@ export class CategoryService {
     return category;
   }
 
-  // Get category by slug
   static async getCategoryBySlug(slug: string) {
     const category = await prisma.category.findUnique({
       where: { slug },
@@ -49,9 +46,7 @@ export class CategoryService {
     return category;
   }
 
-  // Create category
   static async createCategory(data: CreateCategoryDTO) {
-    // Check if slug already exists
     const existingCategory = await prisma.category.findUnique({
       where: { slug: data.slug },
     });
@@ -70,11 +65,9 @@ export class CategoryService {
     });
   }
 
-  // Update category
   static async updateCategory(id: number, data: UpdateCategoryDTO) {
-    await this.getCategoryById(id); // Check if category exists
+    await this.getCategoryById(id);
 
-    // If slug is being updated, check if new slug already exists
     if (data.slug) {
       const existingCategory = await prisma.category.findUnique({
         where: { slug: data.slug },
@@ -96,16 +89,14 @@ export class CategoryService {
     });
   }
 
-  // Delete category
   static async deleteCategory(id: number) {
-    await this.getCategoryById(id); // Check if category exists
+    await this.getCategoryById(id);
 
     return prisma.category.delete({
       where: { id },
     });
   }
 
-  // Get items by category
   static async getItemsByCategory(categoryId: number) {
     const category = await this.getCategoryById(categoryId);
 
@@ -119,7 +110,6 @@ export class CategoryService {
     };
   }
 
-  // Get items by category slug
   static async getItemsByCategorySlug(slug: string) {
     const category = await this.getCategoryBySlug(slug);
 

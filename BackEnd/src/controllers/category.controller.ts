@@ -3,7 +3,6 @@ import { CategoryService } from '../services/category.service';
 import { CreateCategoryDTO, UpdateCategoryDTO } from '../types';
 
 export class CategoryController {
-  // Get all categories
   static async getAllCategories(
     req: Request,
     res: Response,
@@ -21,7 +20,6 @@ export class CategoryController {
     }
   }
 
-  // Get category by ID
   static async getCategoryById(
     req: Request,
     res: Response,
@@ -40,7 +38,6 @@ export class CategoryController {
     }
   }
 
-  // Get category by slug
   static async getCategoryBySlug(
     req: Request,
     res: Response,
@@ -59,7 +56,6 @@ export class CategoryController {
     }
   }
 
-  // Create category
   static async createCategory(req: Request, res: Response, next: NextFunction) {
     try {
       const data: CreateCategoryDTO = req.body;
@@ -74,7 +70,6 @@ export class CategoryController {
     }
   }
 
-  // Update category
   static async updateCategory(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -90,7 +85,6 @@ export class CategoryController {
     }
   }
 
-  // Delete category
   static async deleteCategory(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -105,7 +99,6 @@ export class CategoryController {
     }
   }
 
-  // Get items by category
   static async getItemsByCategory(
     req: Request,
     res: Response,
@@ -124,7 +117,6 @@ export class CategoryController {
     }
   }
 
-  // Get items by category slug
   static async getItemsByCategorySlug(
     req: Request,
     res: Response,

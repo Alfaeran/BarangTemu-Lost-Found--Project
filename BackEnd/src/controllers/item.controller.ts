@@ -3,13 +3,11 @@ import { ItemService } from '../services/item.service';
 import { CreateItemDTO, UpdateItemDTO } from '../types';
 
 export class ItemController {
-  // Get all items with pagination and advanced filters
   static async getAllItems(req: Request, res: Response, next: NextFunction) {
     try {
       const page = Number(req.query.page) || 1;
       const limit = Number(req.query.limit) || 10;
 
-      // Build filters object
       const filters: any = {};
 
       if (req.query.type) {
@@ -50,7 +48,6 @@ export class ItemController {
     }
   }
 
-  // Get item by ID
   static async getItemById(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
@@ -65,7 +62,6 @@ export class ItemController {
     }
   }
 
-  // Search by location
   static async searchByLocation(
     req: Request,
     res: Response,
@@ -91,7 +87,6 @@ export class ItemController {
     }
   }
 
-  // Search by title
   static async searchByTitle(
     req: Request,
     res: Response,
@@ -117,38 +112,33 @@ export class ItemController {
     }
   }
 
-  // Create item
   static async createItem(req: Request, res: Response, next: NextFunction) {
     try {
       const data: any = req.body;
       
-      // Parse numeric fields from FormData (which sends everything as strings)
       if (data.userId) {
         data.userId = Number(data.userId);
       }
       if (data.categoryId && data.categoryId !== '') {
         data.categoryId = Number(data.categoryId);
       } else {
-        delete data.categoryId; // Remove if empty string
+        delete data.categoryId;
       }
       
-      // Handle file upload
       const multerReq = req as any;
       if (multerReq.file) {
         data.imageUrl = `/uploads/${multerReq.file.filename}`;
       }
       
-      // Convert dateIncident string to Date if it's a string
       if (data.dateIncident && typeof data.dateIncident === 'string') {
         data.dateIncident = new Date(data.dateIncident);
       }
 
-      // Parse additionalData if it's a string (from FormData)
       if (data.additionalData && typeof data.additionalData === 'string') {
         try {
           data.additionalData = JSON.parse(data.additionalData);
         } catch (e) {
-          delete data.additionalData; // Invalid JSON, remove it
+          delete data.additionalData;
         }
       }
       
@@ -164,13 +154,11 @@ export class ItemController {
     }
   }
 
-  // Update item
   static async updateItem(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
       const data: any = req.body;
       
-      // Convert dateIncident string to Date if it's a string
       if (data.dateIncident && typeof data.dateIncident === 'string') {
         data.dateIncident = new Date(data.dateIncident);
       }
@@ -186,7 +174,6 @@ export class ItemController {
     }
   }
 
-  // Delete item
   static async deleteItem(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;

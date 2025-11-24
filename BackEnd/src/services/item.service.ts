@@ -2,7 +2,6 @@ import prisma from '../lib/prisma';
 import { CreateItemDTO, UpdateItemDTO, AppError } from '../types';
 
 export class ItemService {
-  // Get all items with advanced filtering
   static async getAllItems(
     page: number = 1,
     limit: number = 10,
@@ -19,7 +18,6 @@ export class ItemService {
   ) {
     const skip = (page - 1) * limit;
 
-    // Build where clause
     const where: any = {};
 
     if (filters?.type) {
@@ -47,7 +45,6 @@ export class ItemService {
       };
     }
 
-    // Date range filtering
     if (filters?.dateFrom || filters?.dateTo) {
       where.dateIncident = {};
       if (filters?.dateFrom) {
@@ -101,7 +98,6 @@ export class ItemService {
     };
   }
 
-  // Get item by ID
   static async getItemById(id: number) {
     const item = await prisma.item.findUnique({
       where: { id },
@@ -131,9 +127,7 @@ export class ItemService {
     return item;
   }
 
-  // Get items by user
   static async getItemsByUser(userId: number) {
-    // Check if user exists
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new AppError(404, `User with ID ${userId} not found`);
@@ -156,7 +150,6 @@ export class ItemService {
     });
   }
 
-  // Get items by type (LOST or FOUND)
   static async getItemsByType(type: string) {
     const validTypes = ['LOST', 'FOUND'];
     if (!validTypes.includes(type)) {
@@ -187,7 +180,6 @@ export class ItemService {
     });
   }
 
-  // Get items by status
   static async getItemsByStatus(status: string) {
     const validStatuses = ['OPEN', 'RESOLVED'];
     if (!validStatuses.includes(status)) {
@@ -218,7 +210,6 @@ export class ItemService {
     });
   }
 
-  // Search items by location
   static async searchByLocation(location: string) {
     return prisma.item.findMany({
       where: {
@@ -246,7 +237,6 @@ export class ItemService {
     });
   }
 
-  // Search items by title
   static async searchByTitle(title: string) {
     return prisma.item.findMany({
       where: {
@@ -274,21 +264,16 @@ export class ItemService {
     });
   }
 
-  // Create item
   static async createItem(data: CreateItemDTO) {
-    // Ensure userId and categoryId are numbers (FormData sends them as strings)
     const userId = typeof data.userId === 'string' ? Number(data.userId) : data.userId;
     const categoryId = data.categoryId 
       ? (typeof data.categoryId === 'string' ? Number(data.categoryId) : data.categoryId)
       : undefined;
 
-    // Check if user exists
     const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new AppError(404, `User with ID ${userId} not found`);
     }
-
-    // Check if category exists (if provided)
     if (categoryId) {
       const category = await prisma.category.findUnique({
         where: { id: categoryId },
@@ -330,11 +315,9 @@ export class ItemService {
     });
   }
 
-  // Update item
   static async updateItem(id: number, data: UpdateItemDTO) {
-    await this.getItemById(id); // Check if item exists
+    await this.getItemById(id);
 
-    // Check if category exists (if provided in update)
     if (data.categoryId) {
       const category = await prisma.category.findUnique({
         where: { id: data.categoryId },
@@ -377,9 +360,8 @@ export class ItemService {
     });
   }
 
-  // Delete item
   static async deleteItem(id: number) {
-    await this.getItemById(id); // Check if item exists
+    await this.getItemById(id);
 
     return prisma.item.delete({
       where: { id },

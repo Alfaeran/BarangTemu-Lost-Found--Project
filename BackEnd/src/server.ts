@@ -1,4 +1,4 @@
-import app from './app';
+﻿import app from './app';
 import prisma from './lib/prisma';
 
 const PORT = process.env.PORT || 3000;
@@ -8,7 +8,6 @@ const server = app.listen(PORT, () => {
   console.log(`📚 API Documentation: http://localhost:${PORT}/api`);
 });
 
-// Graceful shutdown
 process.on('SIGINT', async () => {
   console.log('\n🛑 Shutting down gracefully...');
   server.close();
@@ -23,7 +22,6 @@ process.on('SIGTERM', async () => {
   process.exit(0);
 });
 
-// Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
   console.error('Unhandled Rejection:', err);
   process.exit(1);

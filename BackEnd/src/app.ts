@@ -1,4 +1,4 @@
-import express from 'express';
+﻿import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import {
@@ -13,20 +13,16 @@ import itemRoutes from './routes/item.routes';
 
 const app = express();
 
-// Middleware
 app.use(cors());
 
-// Limit JSON and form data parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.use(requestLogger);
 app.use(validateJSON);
 
-// Serve static files for uploads
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Health check
 app.get('/health', (req, res) => {
   res.json({
     status: 'OK',
@@ -34,7 +30,6 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Welcome route
 app.get('/', (req, res) => {
   res.json({
     message: 'Welcome to Barang Temu Lost & Found API',
@@ -48,15 +43,12 @@ app.get('/', (req, res) => {
   });
 });
 
-// API Routes
 app.use('/api/users', userRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/items', itemRoutes);
 
-// 404 handler
 app.use(notFound);
 
-// Error handler (must be last)
 app.use(errorHandler);
 
 export default app;
