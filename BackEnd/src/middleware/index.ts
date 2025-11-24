@@ -61,6 +61,11 @@ export const validateJSON = (
     req.method === 'PUT' ||
     req.method === 'PATCH'
   ) {
+    // Skip validation for multipart/form-data (file uploads)
+    if (req.is('multipart/form-data')) {
+      return next();
+    }
+    
     if (!req.is('json')) {
       const error = new AppError(
         400,
