@@ -122,6 +122,14 @@ export class ItemController {
     try {
       const data: any = req.body;
       
+      // Parse numeric fields from FormData (which sends everything as strings)
+      if (data.userId) {
+        data.userId = Number(data.userId);
+      }
+      if (data.categoryId) {
+        data.categoryId = Number(data.categoryId);
+      }
+      
       // Handle file upload
       const multerReq = req as any;
       if (multerReq.file) {

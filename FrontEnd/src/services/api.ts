@@ -53,12 +53,8 @@ class ApiClient {
   }
 
   async createItemWithImage(formData: FormData): Promise<ApiResponse<Item>> {
-    const config = {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    };
-    const { data } = await this.api.post('/items', formData, config);
+    // Let axios handle the Content-Type header automatically for FormData
+    const { data } = await this.api.post('/items', formData);
     return data;
   }
 

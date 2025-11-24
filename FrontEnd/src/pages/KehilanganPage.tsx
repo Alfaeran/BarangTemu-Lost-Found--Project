@@ -145,8 +145,9 @@ export const KehilanganPage = () => {
         }
       }
     } catch (err) {
-      setError('Terjadi kesalahan saat membuat laporan');
-      console.error(err);
+      const errorMessage = (err as any)?.response?.data?.error || (err as any)?.message || 'Terjadi kesalahan saat membuat laporan';
+      setError(errorMessage);
+      console.error('Submit error:', err);
     } finally {
       setLoading(false);
     }
