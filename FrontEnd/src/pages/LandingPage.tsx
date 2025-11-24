@@ -19,6 +19,15 @@ export const LandingPage = () => {
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
 
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   useEffect(() => {
     loadCategories();
   }, []);
@@ -97,20 +106,20 @@ export const LandingPage = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-r from-[#0080C8] via-[#0070B8] to-[#0060A0] text-white py-24 shadow-2xl">
         <div className="max-w-7xl mx-auto px-4">
-          <div className="mb-8">
+          <div className="mb-8 text-center">
             <h1 className="text-5xl md:text-6xl font-bold mb-4 leading-tight">
               Temukan Barang Hilang Anda
             </h1>
-            <p className="text-lg md:text-xl mb-8 text-blue-100 max-w-2xl">
+            <p className="text-lg md:text-xl mb-8 text-blue-100 max-w-2xl mx-auto">
               Platform terpercaya untuk melaporkan dan mencari barang yang hilang atau ditemukan di sekitar ITS. Kami membantu Anda menemukan apa yang Anda cari.
             </p>
           </div>
 
           {/* Hero Buttons */}
-          <div className="flex gap-4 flex-wrap">
+          <div className="flex gap-4 flex-wrap justify-center">
             <button
               onClick={() => navigate('/kehilangan')}
-              className="px-8 py-3 bg-white text-[#EF4444] hover:bg-gray-50 font-bold rounded-lg transition shadow-lg duration-200 transform hover:scale-105"
+              className="px-8 py-3 bg-[#D4AF37] text-gray-800 hover:bg-[#C9A227] font-bold rounded-lg transition shadow-lg duration-200 transform hover:scale-105"
             >
               Lapor Kehilangan
             </button>
@@ -128,8 +137,8 @@ export const LandingPage = () => {
       <section className="max-w-7xl mx-auto px-4 py-12">
         {/* Filter Tabs and Advanced Filters Combined */}
         <div className="mb-8 bg-white rounded-xl shadow-lg border border-gray-100 p-6 hover:shadow-xl transition duration-300">
-          {/* Filter Tabs */}
-          <div className="flex gap-4 border-b-2 border-gray-200 pb-4 mb-6 overflow-x-auto">
+          {/* Filter Tabs and Search */}
+          <div className="flex gap-4 border-b-2 border-gray-200 pb-4 mb-6 overflow-x-auto items-end flex-wrap">
             <button
               onClick={() => setFilter('all')}
               className={`pb-3 font-semibold transition px-4 whitespace-nowrap ${
@@ -160,6 +169,25 @@ export const LandingPage = () => {
             >
               Barang Ditemukan Terbaru
             </button>
+
+            {/* Search Bar inline with tabs */}
+            <div className="ml-auto flex items-center gap-2">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Cari..."
+                className="px-4 py-2 w-64 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0080C8] focus:border-[#0080C8] text-sm shadow-sm hover:shadow-md transition"
+              />
+              <select
+                value={searchType}
+                onChange={(e) => setSearchType(e.target.value as 'location' | 'title')}
+                className="px-3 py-2 border-2 border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0080C8] focus:border-[#0080C8] shadow-sm hover:shadow-md transition bg-white"
+              >
+                <option value="title">Nama</option>
+                <option value="location">Lokasi</option>
+              </select>
+            </div>
           </div>
 
           {/* Advanced Filters */}
@@ -195,6 +223,7 @@ export const LandingPage = () => {
                 type="date"
                 value={dateFrom}
                 onChange={(e) => setDateFrom(e.target.value)}
+                max={getTodayDate()}
                 className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0080C8] focus:border-[#0080C8] text-sm shadow-sm hover:shadow-md transition"
               />
             </div>
@@ -208,6 +237,7 @@ export const LandingPage = () => {
                 type="date"
                 value={dateTo}
                 onChange={(e) => setDateTo(e.target.value)}
+                max={getTodayDate()}
                 className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0080C8] focus:border-[#0080C8] text-sm shadow-sm hover:shadow-md transition"
               />
             </div>

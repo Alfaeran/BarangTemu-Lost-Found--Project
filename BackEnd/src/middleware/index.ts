@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../types';
+import { UserService } from '../services/user.service';
 
 // Error handling middleware
 export const errorHandler = (
@@ -69,4 +70,43 @@ export const validateJSON = (
     }
   }
   next();
+};
+
+// Authentication middleware
+export const authenticate = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      throw new AppError(401, 'Authorization header missing');
+    }
+
+    const token = authHeader.startsWith('Bearer ')
+      ? authHeader.slice(7)
+      : authHeader;
+
+    const decoded = UserService.verifyToken(token);
+    (req as any).userId = decoded.id;
+    (req as any).userEmail = decoded.email;
+    (req as any).userRole = decoded.role;
+
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Authorization middleware (admin only)
+export const authorize = (requiredRole: string = 'admin') => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    const userRole = (req as any).userRole;
+    if (userRole !== requiredRole) {
+      const error = new AppError(403, 'Access denied. Admin privileges required.');
+      return next(error);
+    }
+    next();
+  };
 };

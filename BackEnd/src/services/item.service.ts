@@ -2,12 +2,65 @@ import prisma from '../lib/prisma';
 import { CreateItemDTO, UpdateItemDTO, AppError } from '../types';
 
 export class ItemService {
-  // Get all items with pagination
-  static async getAllItems(page: number = 1, limit: number = 10) {
+  // Get all items with advanced filtering
+  static async getAllItems(
+    page: number = 1,
+    limit: number = 10,
+    filters?: {
+      type?: string;
+      status?: string;
+      userId?: number;
+      categoryId?: number;
+      location?: string;
+      title?: string;
+      dateFrom?: string;
+      dateTo?: string;
+    }
+  ) {
     const skip = (page - 1) * limit;
+
+    // Build where clause
+    const where: any = {};
+
+    if (filters?.type) {
+      where.type = filters.type;
+    }
+    if (filters?.status) {
+      where.status = filters.status;
+    }
+    if (filters?.userId) {
+      where.userId = filters.userId;
+    }
+    if (filters?.categoryId) {
+      where.categoryId = filters.categoryId;
+    }
+    if (filters?.location) {
+      where.location = {
+        contains: filters.location,
+        mode: 'insensitive',
+      };
+    }
+    if (filters?.title) {
+      where.title = {
+        contains: filters.title,
+        mode: 'insensitive',
+      };
+    }
+
+    // Date range filtering
+    if (filters?.dateFrom || filters?.dateTo) {
+      where.dateIncident = {};
+      if (filters?.dateFrom) {
+        where.dateIncident.gte = new Date(filters.dateFrom);
+      }
+      if (filters?.dateTo) {
+        where.dateIncident.lte = new Date(filters.dateTo);
+      }
+    }
 
     const [items, total] = await Promise.all([
       prisma.item.findMany({
+        where,
         skip,
         take: limit,
         include: {
@@ -23,6 +76,7 @@ export class ItemService {
             select: {
               id: true,
               name: true,
+              slug: true,
               icon: true,
             },
           },
@@ -31,7 +85,7 @@ export class ItemService {
           createdAt: 'desc',
         },
       }),
-      prisma.item.count(),
+      prisma.item.count({ where }),
     ]);
 
     const pages = Math.ceil(total / limit);

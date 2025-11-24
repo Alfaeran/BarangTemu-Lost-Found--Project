@@ -34,6 +34,9 @@ class ApiClient {
     location?: string;
     title?: string;
     userId?: number;
+    categoryId?: number;
+    dateFrom?: string;
+    dateTo?: string;
   }): Promise<PaginatedResponse<Item>> {
     const { data } = await this.api.get('/items', { params: filters });
     return data;
@@ -93,6 +96,21 @@ class ApiClient {
   }
 
   // ===== USERS =====
+  async registerUser(user: { username: string; email: string; password: string; phoneNumber?: string }): Promise<ApiResponse<{ user: User; token: string }>> {
+    const { data } = await this.api.post('/users/auth/register', user);
+    return data;
+  }
+
+  async loginUser(credentials: { email: string; password: string }): Promise<ApiResponse<{ user: User; token: string }>> {
+    const { data } = await this.api.post('/users/auth/login', credentials);
+    return data;
+  }
+
+  async getCurrentUser(): Promise<ApiResponse<User>> {
+    const { data } = await this.api.get('/users/auth/me');
+    return data;
+  }
+
   async getUsers(): Promise<ApiResponse<User[]>> {
     const { data } = await this.api.get('/users');
     return data;

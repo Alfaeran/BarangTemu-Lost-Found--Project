@@ -21,24 +21,24 @@ export const LoginPage = () => {
     try {
       setLoading(true);
       
-      // For now, we'll create a user and store their info
-      // In a real app, you'd have an actual login endpoint
-      const response = await api.createUser({
-        username: email.split('@')[0],
+      const response = await api.loginUser({
         email,
+        password,
       });
 
       if (response.success && response.data) {
-        // Store user info
-        localStorage.setItem('user', JSON.stringify(response.data));
-        localStorage.setItem('token', `token_${response.data.id}`);
+        // Store user info and token
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('token', response.data.token);
         
         navigate('/');
+        window.location.reload();
       } else {
         setError(response.error || 'Login gagal');
       }
-    } catch (err) {
-      setError('Terjadi kesalahan saat login');
+    } catch (err: any) {
+      const errorMessage = err.response?.data?.error || 'Terjadi kesalahan saat login';
+      setError(errorMessage);
       console.error(err);
     } finally {
       setLoading(false);
@@ -114,19 +114,25 @@ export const LoginPage = () => {
 
         {/* Back Link */}
         <div className="text-center mt-6">
+          <p className="text-gray-600">
+            Belum punya akun?{' '}
+            <button
+              onClick={() => navigate('/register')}
+              className="text-[#0080C8] hover:text-[#0060A0] font-semibold transition"
+            >
+              Daftar di sini
+            </button>
+          </p>
+        </div>
+
+        {/* Back Button */}
+        <div className="text-center mt-4">
           <button
             onClick={() => navigate('/')}
             className="text-[#0080C8] hover:text-[#0060A0] font-semibold transition"
           >
             ← Kembali ke Beranda
           </button>
-        </div>
-
-        {/* Demo Info */}
-        <div className="mt-8 p-4 bg-gray-50 rounded border border-gray-200 text-sm text-gray-600">
-          <p className="font-semibold mb-2">Demo Info:</p>
-          <p>Email: demo@example.com</p>
-          <p>Password: any</p>
         </div>
       </div>
     </div>

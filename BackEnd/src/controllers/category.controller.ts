@@ -40,6 +40,25 @@ export class CategoryController {
     }
   }
 
+  // Get category by slug
+  static async getCategoryBySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { slug } = req.params;
+      const category = await CategoryService.getCategoryBySlug(slug);
+      res.json({
+        success: true,
+        message: 'Category retrieved successfully',
+        data: category,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
   // Create category
   static async createCategory(req: Request, res: Response, next: NextFunction) {
     try {
@@ -104,4 +123,24 @@ export class CategoryController {
       next(error);
     }
   }
+
+  // Get items by category slug
+  static async getItemsByCategorySlug(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) {
+    try {
+      const { slug } = req.params;
+      const result = await CategoryService.getItemsByCategorySlug(slug);
+      res.json({
+        success: true,
+        message: 'Items retrieved successfully',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
+

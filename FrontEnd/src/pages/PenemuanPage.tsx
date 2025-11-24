@@ -10,6 +10,15 @@ export const PenemuanPage = () => {
   const [error, setError] = useState('');
   const user = localStorage.getItem('user');
 
+  // Get today's date in YYYY-MM-DD format
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -58,12 +67,13 @@ export const PenemuanPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleDynamicFieldChange = (fieldName: string, value: string) => {
+  const handleDynamicFieldChange = (fieldName: string, value: string, fieldIndex: number) => {
+    const uniqueFieldKey = `${fieldName}_${fieldIndex}`;
     setFormData({
       ...formData,
       additionalData: {
         ...formData.additionalData,
-        [fieldName]: value,
+        [uniqueFieldKey]: value,
       },
     });
   };
@@ -107,12 +117,12 @@ export const PenemuanPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#ECFDF5] py-12">
+    <div className="min-h-screen bg-[#FEF9F3] py-12">
       <div className="max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-lg shadow-lg p-8 border-t-4 border-[#10B981]">
+        <div className="bg-white rounded-lg shadow-lg p-8 border-t-4 border-[#D4AF37]">
           {/* Header */}
           <div className="mb-8">
-            <h1 className="text-4xl font-bold text-[#10B981] mb-2">Lapor Barang Ditemukan</h1>
+            <h1 className="text-4xl font-bold text-[#D4AF37] mb-2">Lapor Barang Ditemukan</h1>
             <p className="text-gray-600">
               Isi formulir berikut untuk melaporkan barang yang Anda temukan
             </p>
@@ -120,7 +130,7 @@ export const PenemuanPage = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="bg-[#ECFDF5] border-2 border-[#10B981] text-[#047857] px-4 py-3 rounded-lg mb-6 font-medium">
+            <div className="bg-[#FEF9F3] border-2 border-[#D4AF37] text-[#B8860B] px-4 py-3 rounded-lg mb-6 font-medium">
               ⚠️ {error}
             </div>
           )}
@@ -130,7 +140,7 @@ export const PenemuanPage = () => {
             {/* Title */}
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
-                Nama Barang <span className="text-[#10B981]">*</span>
+                Nama Barang <span className="text-[#D4AF37]">*</span>
               </label>
               <input
                 type="text"
@@ -138,7 +148,7 @@ export const PenemuanPage = () => {
                 value={formData.title}
                 onChange={handleInputChange}
                 placeholder="Contoh: Dompet Kulit Hitam"
-                className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200"
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
                 required
               />
             </div>
@@ -154,7 +164,7 @@ export const PenemuanPage = () => {
                 onChange={handleInputChange}
                 placeholder="Jelaskan ciri-ciri barang secara detail..."
                 rows={4}
-                className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200 resize-none"
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200 resize-none"
               />
             </div>
 
@@ -166,7 +176,7 @@ export const PenemuanPage = () => {
               <select
                 value={formData.categoryId}
                 onChange={(e) => handleCategoryChange(e.target.value)}
-                className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200"
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
               >
                 <option value="">Pilih Kategori</option>
                 {categories.map((cat) => (
@@ -179,20 +189,20 @@ export const PenemuanPage = () => {
 
             {/* Dynamic Fields */}
             {dynamicFields.length > 0 && (
-              <div className="bg-[#ECFDF5] p-4 rounded-lg border-2 border-[#A7F3D0]">
-                <h3 className="font-semibold text-[#047857] mb-4">📋 Data Spesifik Barang</h3>
+              <div className="bg-[#FEF9F3] p-4 rounded-lg border-2 border-[#F4D4A1]">
+                <h3 className="font-semibold text-[#B8860B] mb-4">📋 Data Spesifik Barang</h3>
                 <div className="space-y-4">
-                  {dynamicFields.map((field) => (
-                    <div key={field.name}>
+                  {dynamicFields.map((field, index) => (
+                    <div key={`${field.name}-${index}`}>
                       <label className="block text-gray-700 font-semibold mb-2">
                         {field.label}
                       </label>
                       <input
                         type={field.type || 'text'}
                         placeholder={field.placeholder}
-                        value={formData.additionalData[field.name] || ''}
-                        onChange={(e) => handleDynamicFieldChange(field.name, e.target.value)}
-                        className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200"
+                        value={formData.additionalData[`${field.name}_${index}`] || ''}
+                        onChange={(e) => handleDynamicFieldChange(field.name, e.target.value, index)}
+                        className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
                       />
                     </div>
                   ))}
@@ -203,7 +213,7 @@ export const PenemuanPage = () => {
             {/* Location */}
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
-                Lokasi Ditemukan <span className="text-[#10B981]">*</span>
+                Lokasi Ditemukan <span className="text-[#D4AF37]">*</span>
               </label>
               <input
                 type="text"
@@ -211,7 +221,7 @@ export const PenemuanPage = () => {
                 value={formData.location}
                 onChange={handleInputChange}
                 placeholder="Contoh: Depan Perpustakaan, ITS"
-                className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200"
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
                 required
               />
             </div>
@@ -219,14 +229,15 @@ export const PenemuanPage = () => {
             {/* Date */}
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
-                Tanggal Ditemukan <span className="text-[#10B981]">*</span>
+                Tanggal Ditemukan <span className="text-[#D4AF37]">*</span>
               </label>
               <input
                 type="date"
                 name="dateIncident"
                 value={formData.dateIncident}
                 onChange={handleInputChange}
-                className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200"
+                max={getTodayDate()}
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
                 required
               />
             </div>
@@ -234,7 +245,7 @@ export const PenemuanPage = () => {
             {/* Contact Info */}
             <div>
               <label className="block text-gray-700 font-semibold mb-2">
-                Nomor Kontak <span className="text-[#10B981]">*</span>
+                Nomor Kontak <span className="text-[#D4AF37]">*</span>
               </label>
               <input
                 type="tel"
@@ -242,7 +253,7 @@ export const PenemuanPage = () => {
                 value={formData.contactInfo}
                 onChange={handleInputChange}
                 placeholder="Contoh: 08123456789"
-                className="w-full px-4 py-2 border-2 border-green-300 rounded-lg focus:outline-none focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981] focus:ring-opacity-20 transition-colors duration-200"
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
                 required
               />
             </div>
@@ -252,9 +263,9 @@ export const PenemuanPage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="flex-1 py-3 bg-[#10B981] hover:bg-[#059669] disabled:bg-green-300 text-white font-bold rounded-lg transition duration-200 shadow-md"
+                className="flex-1 py-3 bg-[#D4AF37] hover:bg-[#C9A227] disabled:bg-amber-200 text-gray-800 font-bold rounded-lg transition duration-200 shadow-md"
               >
-                {loading ? 'Mengirim...' : '✓ Lapor Penemuan'}
+                {loading ? 'Mengirim...' : 'Lapor Penemuan'}
               </button>
               <button
                 type="button"

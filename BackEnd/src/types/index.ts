@@ -3,13 +3,16 @@ export interface IUser {
   id: number;
   username: string;
   email: string;
+  password?: string; // Excluded in responses
   phoneNumber?: string;
+  role: 'user' | 'admin';
   createdAt: Date;
 }
 
 export interface CreateUserDTO {
   username: string;
   email: string;
+  password: string;
   phoneNumber?: string;
 }
 
@@ -19,22 +22,45 @@ export interface UpdateUserDTO {
   phoneNumber?: string;
 }
 
+export interface LoginDTO {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message: string;
+  data: {
+    user: IUser;
+    token: string;
+  };
+}
+
+export interface TokenPayload {
+  id: number;
+  email: string;
+  role: string;
+}
+
 // Category Types
 export interface ICategory {
   id: number;
   name: string;
+  slug: string;
   icon?: string;
   formSchema?: Record<string, any>;
 }
 
 export interface CreateCategoryDTO {
   name: string;
+  slug: string;
   icon?: string;
   formSchema?: Record<string, any>;
 }
 
 export interface UpdateCategoryDTO {
   name?: string;
+  slug?: string;
   icon?: string;
   formSchema?: Record<string, any>;
 }
