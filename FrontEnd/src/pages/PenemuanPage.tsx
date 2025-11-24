@@ -10,7 +10,7 @@ export const PenemuanPage = () => {
   const [error, setError] = useState('');
   const user = localStorage.getItem('user');
 
-  // Get today's date in YYYY-MM-DD format
+
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -55,7 +55,7 @@ export const PenemuanPage = () => {
   const handleCategoryChange = (categoryId: string) => {
     setFormData({ ...formData, categoryId });
 
-    // Get dynamic fields based on category
+
     const selectedCategory = categories.find(c => c.id === parseInt(categoryId));
     if (selectedCategory?.formSchema?.fields) {
       setDynamicFields(selectedCategory.formSchema.fields);
@@ -100,7 +100,7 @@ export const PenemuanPage = () => {
       setLoading(true);
       const userData = JSON.parse(user);
 
-      // Use FormData if image exists
+
       if (formData.image) {
         const formDataObj = new FormData();
         formDataObj.append('userId', userData.id.toString());
@@ -125,7 +125,7 @@ export const PenemuanPage = () => {
           setError(response.error || 'Gagal membuat laporan');
         }
       } else {
-        // Send as JSON if no image
+
         const response = await api.createItem({
           userId: userData.id,
           type: ItemType.FOUND,

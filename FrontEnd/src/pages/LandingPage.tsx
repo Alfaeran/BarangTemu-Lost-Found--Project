@@ -22,7 +22,7 @@ export const LandingPage = () => {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
   const [userRole, setUserRole] = useState<string | null>(null);
 
-  // Get today's date in YYYY-MM-DD format
+
   const getTodayDate = () => {
     const today = new Date();
     const year = today.getFullYear();
@@ -33,7 +33,7 @@ export const LandingPage = () => {
 
   useEffect(() => {
     loadCategories();
-    // Check user role
+
     const user = localStorage.getItem('user');
     if (user) {
       const userData = JSON.parse(user);

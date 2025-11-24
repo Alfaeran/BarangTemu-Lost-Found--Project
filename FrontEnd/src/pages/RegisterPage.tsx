@@ -18,7 +18,7 @@ export const RegisterPage = () => {
     setError('');
     setSuccess('');
 
-    // Validation
+
     if (!username || !email || !password || !confirmPassword) {
       setError('Semua field harus diisi');
       return;
@@ -45,7 +45,7 @@ export const RegisterPage = () => {
       });
 
       if (response.success && response.data) {
-        // Store user info and token
+
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
 

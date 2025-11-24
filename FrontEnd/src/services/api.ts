@@ -14,20 +14,20 @@ class ApiClient {
       timeout: 10000,
     });
 
-    // Add token to requests if available
+
     this.api.interceptors.request.use((config) => {
       const token = localStorage.getItem('token');
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-      // Set Content-Type to application/json only for non-FormData requests
+
       if (!(config.data instanceof FormData)) {
         config.headers['Content-Type'] = 'application/json';
       }
       return config;
     });
 
-    // Add response interceptor to convert relative image URLs to absolute URLs
+
     this.api.interceptors.response.use((response) => {
       if (response.data?.data) {
         this.convertImageUrls(response.data.data);
@@ -36,7 +36,7 @@ class ApiClient {
     });
   }
 
-  // Helper method to convert relative image URLs to absolute URLs
+
   private convertImageUrls(data: any): void {
     if (Array.isArray(data)) {
       data.forEach((item) => this.convertImageUrls(item));
@@ -44,7 +44,7 @@ class ApiClient {
       if (data.imageUrl && typeof data.imageUrl === 'string' && data.imageUrl.startsWith('/uploads')) {
         data.imageUrl = `${this.backendBaseURL}${data.imageUrl}`;
       }
-      // Recursively convert nested objects
+
       Object.values(data).forEach((value) => {
         if (typeof value === 'object') {
           this.convertImageUrls(value);
@@ -53,7 +53,7 @@ class ApiClient {
     }
   }
 
-  // ===== ITEMS =====
+
   async getItems(filters?: {
     page?: number;
     limit?: number;
@@ -81,7 +81,7 @@ class ApiClient {
   }
 
   async createItemWithImage(formData: FormData): Promise<ApiResponse<Item>> {
-    // Let axios handle the Content-Type header automatically for FormData
+
     const { data } = await this.api.post('/items', formData);
     return data;
   }
@@ -103,7 +103,7 @@ class ApiClient {
     return data;
   }
 
-  // ===== CATEGORIES =====
+
   async getCategories(): Promise<ApiResponse<Category[]>> {
     const { data } = await this.api.get('/categories');
     return data;
@@ -129,7 +129,7 @@ class ApiClient {
     return data;
   }
 
-  // ===== USERS =====
+
   async registerUser(user: { username: string; email: string; password: string; phoneNumber?: string }): Promise<ApiResponse<{ user: User; token: string }>> {
     const { data } = await this.api.post('/users/auth/register', user);
     return data;

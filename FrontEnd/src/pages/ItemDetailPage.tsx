@@ -49,7 +49,7 @@ export const ItemDetailPage = () => {
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement contact form submission
+
     console.log('Contact message:', contactMessage);
     alert('Pesan akan dikirim ke pemilik item');
     setContactMessage('');

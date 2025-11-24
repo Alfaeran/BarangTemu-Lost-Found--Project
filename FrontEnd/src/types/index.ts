@@ -1,4 +1,4 @@
-// User Types
+
 export interface User {
   id: number;
   username: string;
@@ -18,7 +18,7 @@ export interface RegisterRequest {
   phoneNumber?: string;
 }
 
-// Category Types
+
 export interface Category {
   id: number;
   name: string;
@@ -26,7 +26,7 @@ export interface Category {
   formSchema?: Record<string, any>;
 }
 
-// Item Types
+
 export enum ItemType {
   LOST = 'LOST',
   FOUND = 'FOUND',
@@ -76,7 +76,7 @@ export interface UpdateItemRequest extends Partial<CreateItemRequest> {
   status?: ItemStatus;
 }
 
-// API Response Types
+
 export interface ApiResponse<T> {
   success: boolean;
   message: string;
@@ -96,7 +96,7 @@ export interface PaginatedResponse<T> {
   };
 }
 
-// Search & Filter Types
+
 export interface SearchFilters {
   type?: ItemType;
   status?: ItemStatus;

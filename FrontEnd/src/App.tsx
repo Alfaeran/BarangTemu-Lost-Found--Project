@@ -13,7 +13,6 @@ function AppContent() {
   const hideHeader = location.pathname === '/login' || location.pathname === '/register';
 
   const handleSearch = (query: string, type: 'location' | 'title') => {
-    // This search functionality is used in Header
     console.log('Search:', query, type);
   };
 

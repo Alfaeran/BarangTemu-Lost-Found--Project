@@ -18,7 +18,7 @@ export const AdminModal = ({ isOpen, onClose, onItemUpdated }: AdminModalProps) 
   const [activeTab, setActiveTab] = useState<TabType>('view');
   const [selectedItem, setSelectedItem] = useState<Item | null>(null);
 
-  // Form states
+
   const [formData, setFormData] = useState({
     title: '',
     description: '',

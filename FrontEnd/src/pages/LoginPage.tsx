@@ -27,7 +27,7 @@ export const LoginPage = () => {
       });
 
       if (response.success && response.data) {
-        // Store user info and token
+
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('token', response.data.token);
         
