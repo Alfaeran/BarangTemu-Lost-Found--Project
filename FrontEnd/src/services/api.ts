@@ -4,15 +4,14 @@ import { Item, Category, User, CreateItemRequest, UpdateItemRequest, PaginatedRe
 class ApiClient {
   private api: AxiosInstance;
   private baseURL: string;
+  private backendBaseURL: string;
 
   constructor() {
     this.baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+    this.backendBaseURL = this.baseURL.replace('/api', '');
     this.api = axios.create({
       baseURL: this.baseURL,
       timeout: 10000,
-      headers: {
-        'Content-Type': 'application/json',
-      },
     });
 
     // Add token to requests if available
@@ -21,8 +20,37 @@ class ApiClient {
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
+      // Set Content-Type to application/json only for non-FormData requests
+      if (!(config.data instanceof FormData)) {
+        config.headers['Content-Type'] = 'application/json';
+      }
       return config;
     });
+
+    // Add response interceptor to convert relative image URLs to absolute URLs
+    this.api.interceptors.response.use((response) => {
+      if (response.data?.data) {
+        this.convertImageUrls(response.data.data);
+      }
+      return response;
+    });
+  }
+
+  // Helper method to convert relative image URLs to absolute URLs
+  private convertImageUrls(data: any): void {
+    if (Array.isArray(data)) {
+      data.forEach((item) => this.convertImageUrls(item));
+    } else if (data && typeof data === 'object') {
+      if (data.imageUrl && typeof data.imageUrl === 'string' && data.imageUrl.startsWith('/uploads')) {
+        data.imageUrl = `${this.backendBaseURL}${data.imageUrl}`;
+      }
+      // Recursively convert nested objects
+      Object.values(data).forEach((value) => {
+        if (typeof value === 'object') {
+          this.convertImageUrls(value);
+        }
+      });
+    }
   }
 
   // ===== ITEMS =====

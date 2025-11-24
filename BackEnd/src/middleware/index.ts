@@ -105,7 +105,7 @@ export const authenticate = (
 };
 
 // Authorization middleware (admin only)
-export const authorize = (requiredRole: string = 'admin') => {
+export const authorize = (requiredRole: string = 'ADMIN') => {
   return (req: Request, res: Response, next: NextFunction) => {
     const userRole = (req as any).userRole;
     if (userRole !== requiredRole) {

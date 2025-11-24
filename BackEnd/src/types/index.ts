@@ -5,7 +5,7 @@ export interface IUser {
   email: string;
   password?: string; // Excluded in responses
   phoneNumber?: string;
-  role: 'user' | 'admin';
+  role: 'USER' | 'ADMIN';
   createdAt: Date;
 }
 

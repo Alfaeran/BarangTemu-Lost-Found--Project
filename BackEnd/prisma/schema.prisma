@@ -25,6 +25,13 @@ enum ItemStatus {
   @@map("item_status_enum")
 }
 
+enum UserRole {
+  USER
+  ADMIN
+
+  @@map("user_role_enum")
+}
+
 // Models for Lost & Found Application
 
 model User {
@@ -33,7 +40,7 @@ model User {
   email         String    @unique
   password      String
   phoneNumber   String?   @map("phone_number")
-  role          String    @default("user")
+  role          UserRole  @default(USER)
   createdAt     DateTime  @default(now()) @map("created_at")
 
   // Relations

@@ -74,7 +74,7 @@ export class UserService {
         email: data.email,
         password: hashedPassword,
         phoneNumber: data.phoneNumber,
-        role: 'user',
+        role: 'USER',
       },
       select: {
         id: true,
@@ -156,7 +156,7 @@ export class UserService {
         email: data.email,
         password: hashedPassword,
         phoneNumber: data.phoneNumber,
-        role: 'user',
+        role: 'USER',
       },
       select: {
         id: true,

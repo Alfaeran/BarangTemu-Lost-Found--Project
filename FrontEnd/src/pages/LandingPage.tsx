@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ItemCard } from '../components/ItemCard';
+import { AdminModal } from '../components/AdminModal';
 import { Item, ItemType, Category } from '../types';
 import api from '../services/api';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Settings } from 'lucide-react';
 
 type FilterType = 'all' | 'lost' | 'found';
 
@@ -18,6 +19,8 @@ export const LandingPage = () => {
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
+  const [isAdminModalOpen, setIsAdminModalOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
 
   // Get today's date in YYYY-MM-DD format
   const getTodayDate = () => {
@@ -30,6 +33,12 @@ export const LandingPage = () => {
 
   useEffect(() => {
     loadCategories();
+    // Check user role
+    const user = localStorage.getItem('user');
+    if (user) {
+      const userData = JSON.parse(user);
+      setUserRole(userData.role);
+    }
   }, []);
 
   useEffect(() => {
@@ -278,6 +287,26 @@ export const LandingPage = () => {
           </div>
         )}
       </section>
+
+      {/* Admin FAB Button */}
+      {userRole === 'ADMIN' && (
+        <>
+          <button
+            onClick={() => setIsAdminModalOpen(true)}
+            className="fixed bottom-8 right-8 w-16 h-16 bg-gradient-to-r from-[#0080C8] to-[#0060A0] text-white rounded-full shadow-lg hover:shadow-2xl transition duration-300 flex items-center justify-center hover:scale-110 group z-40"
+            title="Admin Panel"
+          >
+            <Settings size={32} className="group-hover:rotate-90 transition duration-300" />
+          </button>
+
+          {/* Admin Modal */}
+          <AdminModal
+            isOpen={isAdminModalOpen}
+            onClose={() => setIsAdminModalOpen(false)}
+            onItemUpdated={loadItems}
+          />
+        </>
+      )}
     </div>
   );
 };

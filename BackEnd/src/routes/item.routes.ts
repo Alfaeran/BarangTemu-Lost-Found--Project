@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { ItemController } from '../controllers/item.controller';
 import { upload } from '../config/multer';
+import { authenticate, authorize } from '../middleware';
 
 const router = Router();
 
@@ -17,6 +18,6 @@ router.get('/', ItemController.getAllItems);
 // Parameterized routes
 router.get('/:id', ItemController.getItemById);
 router.put('/:id', ItemController.updateItem);
-router.delete('/:id', ItemController.deleteItem);
+router.delete('/:id', authenticate, authorize('ADMIN'), ItemController.deleteItem);
 
 export default router;

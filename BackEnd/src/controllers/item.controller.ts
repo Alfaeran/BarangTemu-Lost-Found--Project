@@ -126,8 +126,10 @@ export class ItemController {
       if (data.userId) {
         data.userId = Number(data.userId);
       }
-      if (data.categoryId) {
+      if (data.categoryId && data.categoryId !== '') {
         data.categoryId = Number(data.categoryId);
+      } else {
+        delete data.categoryId; // Remove if empty string
       }
       
       // Handle file upload
@@ -143,7 +145,11 @@ export class ItemController {
 
       // Parse additionalData if it's a string (from FormData)
       if (data.additionalData && typeof data.additionalData === 'string') {
-        data.additionalData = JSON.parse(data.additionalData);
+        try {
+          data.additionalData = JSON.parse(data.additionalData);
+        } catch (e) {
+          delete data.additionalData; // Invalid JSON, remove it
+        }
       }
       
       const item = await ItemService.createItem(data);
@@ -153,6 +159,7 @@ export class ItemController {
         data: item,
       });
     } catch (error) {
+      console.error('CreateItem Error:', error);
       next(error);
     }
   }

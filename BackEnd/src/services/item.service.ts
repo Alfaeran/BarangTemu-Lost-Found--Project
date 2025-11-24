@@ -276,26 +276,32 @@ export class ItemService {
 
   // Create item
   static async createItem(data: CreateItemDTO) {
+    // Ensure userId and categoryId are numbers (FormData sends them as strings)
+    const userId = typeof data.userId === 'string' ? Number(data.userId) : data.userId;
+    const categoryId = data.categoryId 
+      ? (typeof data.categoryId === 'string' ? Number(data.categoryId) : data.categoryId)
+      : undefined;
+
     // Check if user exists
-    const user = await prisma.user.findUnique({ where: { id: data.userId } });
+    const user = await prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
-      throw new AppError(404, `User with ID ${data.userId} not found`);
+      throw new AppError(404, `User with ID ${userId} not found`);
     }
 
     // Check if category exists (if provided)
-    if (data.categoryId) {
+    if (categoryId) {
       const category = await prisma.category.findUnique({
-        where: { id: data.categoryId },
+        where: { id: categoryId },
       });
       if (!category) {
-        throw new AppError(404, `Category with ID ${data.categoryId} not found`);
+        throw new AppError(404, `Category with ID ${categoryId} not found`);
       }
     }
 
     return prisma.item.create({
       data: {
-        userId: data.userId,
-        categoryId: data.categoryId,
+        userId,
+        categoryId,
         type: data.type,
         title: data.title,
         description: data.description,
