@@ -26,6 +26,8 @@ export const KehilanganPage = () => {
     location: '',
     dateIncident: '',
     contactInfo: '',
+    image: null as File | null,
+    imagePreview: '',
     additionalData: {} as any,
   });
 
@@ -67,6 +69,13 @@ export const KehilanganPage = () => {
     setFormData({ ...formData, [name]: value });
   };
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFormData({ ...formData, image: file, imagePreview: URL.createObjectURL(file) });
+    }
+  };
+
   const handleDynamicFieldChange = (fieldName: string, value: string, fieldIndex: number) => {
     const uniqueFieldKey = `${fieldName}_${fieldIndex}`;
     setFormData({
@@ -91,22 +100,49 @@ export const KehilanganPage = () => {
       setLoading(true);
       const userData = JSON.parse(user);
 
-      const response = await api.createItem({
-        userId: userData.id,
-        type: ItemType.LOST,
-        title: formData.title,
-        description: formData.description,
-        categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
-        location: formData.location,
-        dateIncident: formData.dateIncident,
-        contactInfo: formData.contactInfo,
-        additionalData: Object.keys(formData.additionalData).length > 0 ? formData.additionalData : undefined,
-      });
+      // Use FormData if image exists
+      if (formData.image) {
+        const formDataObj = new FormData();
+        formDataObj.append('userId', userData.id.toString());
+        formDataObj.append('type', ItemType.LOST);
+        formDataObj.append('title', formData.title);
+        formDataObj.append('description', formData.description);
+        if (formData.categoryId) {
+          formDataObj.append('categoryId', formData.categoryId);
+        }
+        formDataObj.append('location', formData.location);
+        formDataObj.append('dateIncident', formData.dateIncident);
+        formDataObj.append('contactInfo', formData.contactInfo);
+        if (Object.keys(formData.additionalData).length > 0) {
+          formDataObj.append('additionalData', JSON.stringify(formData.additionalData));
+        }
+        formDataObj.append('image', formData.image);
 
-      if (response.success) {
-        navigate('/');
+        const response = await api.createItemWithImage(formDataObj);
+        if (response.success) {
+          navigate('/');
+        } else {
+          setError(response.error || 'Gagal membuat laporan');
+        }
       } else {
-        setError(response.error || 'Gagal membuat laporan');
+        // Send as JSON if no image
+        const response = await api.createItem({
+          userId: userData.id,
+          type: ItemType.LOST,
+          title: formData.title,
+          description: formData.description,
+          categoryId: formData.categoryId ? parseInt(formData.categoryId) : undefined,
+          location: formData.location,
+          dateIncident: formData.dateIncident,
+          contactInfo: formData.contactInfo,
+          additionalData: Object.keys(formData.additionalData).length > 0 ? formData.additionalData : undefined,
+        });
+
+        if (response.success) {
+          navigate('/');
+        } else {
+          setError(response.error || 'Gagal membuat laporan');
+        }
       }
     } catch (err) {
       setError('Terjadi kesalahan saat membuat laporan');
@@ -166,6 +202,31 @@ export const KehilanganPage = () => {
                 rows={4}
                 className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200 resize-none"
               />
+            </div>
+
+            {/* Image Upload */}
+            <div>
+              <label className="block text-gray-700 font-semibold mb-2">
+                Foto Barang
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="w-full px-4 py-2 border-2 border-amber-200 rounded-lg focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37] focus:ring-opacity-20 transition-colors duration-200"
+              />
+              {formData.imagePreview && (
+                <div className="mt-3 relative">
+                  <img src={formData.imagePreview} alt="Preview" className="w-full h-48 object-cover rounded-lg" />
+                  <button
+                    type="button"
+                    onClick={() => setFormData({ ...formData, image: null, imagePreview: '' })}
+                    className="absolute top-2 right-2 bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600"
+                  >
+                    ✕ Hapus
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Category */}

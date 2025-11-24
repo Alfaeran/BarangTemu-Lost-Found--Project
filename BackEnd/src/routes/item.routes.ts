@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import { ItemController } from '../controllers/item.controller';
+import { upload } from '../config/multer';
 
 const router = Router();
 
 // Create item (must be before /:id)
-router.post('/', ItemController.createItem);
+router.post('/', upload.single('image'), ItemController.createItem);
 
 // Special query routes (must be before /:id)
 router.get('/search/location', ItemController.searchByLocation);

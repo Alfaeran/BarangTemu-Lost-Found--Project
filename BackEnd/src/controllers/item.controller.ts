@@ -122,9 +122,20 @@ export class ItemController {
     try {
       const data: any = req.body;
       
+      // Handle file upload
+      const multerReq = req as any;
+      if (multerReq.file) {
+        data.imageUrl = `/uploads/${multerReq.file.filename}`;
+      }
+      
       // Convert dateIncident string to Date if it's a string
       if (data.dateIncident && typeof data.dateIncident === 'string') {
         data.dateIncident = new Date(data.dateIncident);
+      }
+
+      // Parse additionalData if it's a string (from FormData)
+      if (data.additionalData && typeof data.additionalData === 'string') {
+        data.additionalData = JSON.parse(data.additionalData);
       }
       
       const item = await ItemService.createItem(data);

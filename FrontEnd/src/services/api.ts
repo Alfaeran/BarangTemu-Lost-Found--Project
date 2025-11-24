@@ -52,6 +52,16 @@ class ApiClient {
     return data;
   }
 
+  async createItemWithImage(formData: FormData): Promise<ApiResponse<Item>> {
+    const config = {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    };
+    const { data } = await this.api.post('/items', formData, config);
+    return data;
+  }
+
   async updateItem(id: number, item: UpdateItemRequest): Promise<ApiResponse<Item>> {
     const { data } = await this.api.put(`/items/${id}`, item);
     return data;
