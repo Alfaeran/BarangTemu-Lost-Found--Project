@@ -1,4 +1,3 @@
-// User Types
 export interface IUser {
   id: number;
   username: string;
@@ -42,7 +41,6 @@ export interface TokenPayload {
   role: string;
 }
 
-// Category Types
 export interface ICategory {
   id: number;
   name: string;
@@ -65,7 +63,6 @@ export interface UpdateCategoryDTO {
   formSchema?: Record<string, any>;
 }
 
-// Item Types
 export enum ItemType {
   LOST = 'LOST',
   FOUND = 'FOUND',
@@ -118,7 +115,6 @@ export interface UpdateItemDTO {
   status?: ItemStatus;
 }
 
-// API Response Types
 export interface ApiResponse<T> {
   success: boolean;
   message: string;
@@ -138,7 +134,6 @@ export interface PaginatedResponse<T> {
   };
 }
 
-// Error Types
 export class AppError extends Error {
   constructor(
     public statusCode: number,
